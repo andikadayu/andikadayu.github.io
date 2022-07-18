@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, get, child } from 'firebase/database';
 import getConfig from "../../../MyFirebase";
+import { getStorage, ref as StoreRef, getDownloadURL } from 'firebase/storage';
 
 export default function MyAbout() {
     const [name, setName] = useState("");
@@ -10,8 +11,11 @@ export default function MyAbout() {
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
     const [address_map, setAddressMap] = useState("");
+    const [cvlink, setCvlink] = useState("");
     const app = initializeApp(getConfig());
     const db = ref(getDatabase(app));
+    const storage = getStorage(initializeApp(getConfig()));
+
 
     const getAllData = useCallback(() => {
         ['name', 'email', 'date_of_birth', 'phone', 'address', 'address_map'].forEach((item, index) => {
@@ -48,8 +52,19 @@ export default function MyAbout() {
     }, [db]);
 
 
+    const getCVLink = useCallback(() => {
+        const cvRef = StoreRef(storage, 'resume/resume.pdf');
+        getDownloadURL(cvRef).then(url => {
+            setCvlink(url);
+        }).catch(error => {
+            console.log(error);
+        })
+    }, [storage]);
+
+
     useEffect(() => {
         getAllData();
+        getCVLink();
     }, [getAllData]);
 
 
@@ -90,13 +105,13 @@ export default function MyAbout() {
                                 <tr className="text-gray-600">
                                     <td className="px-4 py-2">Email</td>
                                     <td className="px-4 py-2">
-                                        <a href={'mailto:' + email}>{email}</a>
+                                        <a href={'mailto:' + email} target="_blank" rel="noopener noreferrer">{email}</a>
                                     </td>
                                 </tr>
                                 <tr className="text-gray-600">
                                     <td className="px-4 py-2">Address</td>
                                     <td className="px-4 py-2">
-                                        <a href={address_map}>
+                                        <a href={address_map} target="_blank" rel="noopener noreferrer">
                                             {address}
                                         </a>
                                     </td>
@@ -104,7 +119,7 @@ export default function MyAbout() {
                                 <tr className="text-gray-600">
                                     <td className="px-4 py-2">Github</td>
                                     <td className="px-4 py-2">
-                                        <a href="https://github.com/andikadayu">
+                                        <a href="https://github.com/andikadayu" target="_blank" rel="noopener noreferrer">
                                             <img src="https://img.icons8.com/color/48/000000/github.png" alt="Github" />
                                         </a>
                                     </td>
@@ -112,7 +127,7 @@ export default function MyAbout() {
                                 <tr className="text-gray-600">
                                     <td className="px-4 py-2">Linkedin</td>
                                     <td className="px-4 py-2">
-                                        <a href="https://www.linkedin.com/in/muhammad-andika-dayu-anglita-putra-796838142/">
+                                        <a href="https://www.linkedin.com/in/muhammad-andika-dayu-anglita-putra-796838142/" target="_blank" rel="noopener noreferrer">
                                             <img src="https://img.icons8.com/color/48/000000/linkedin.png" alt="Linkedin" />
                                         </a>
                                     </td>
@@ -120,11 +135,7 @@ export default function MyAbout() {
                             </tbody>
                         </table>
 
-
-                        {/* <button className="bg-blue-500 font-bold rounded-md py-2 px-5 mt-5 shadow-lg uppercase tracking-wider tex">
-                            Download CV
-                        </button> */}
-
+                        <a href={cvlink} className="bg-blue-500 font-bold rounded-md py-2 px-5 mt-5 shadow-lg uppercase tracking-wider tex" target="_blank" rel="noopener noreferrer">Download CV</a>
                     </div>
 
                 </div>

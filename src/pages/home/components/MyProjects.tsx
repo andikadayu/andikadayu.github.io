@@ -37,7 +37,7 @@ export default function MyProjects() {
                 </h4>
             </div>
             <section className="pt-8 px-4">
-                <div className="flex flex-wrap -mx-4">
+                <div className="flex flex-wrap -mx-4 grid-cols-3">
                     {projects.map(ProjectLayout)}
                 </div>
             </section>
@@ -53,11 +53,14 @@ function ProjectLayout(props: any) {
     getDownloadURL(gsReference).then(url => {
         const img = document.getElementById(`img-project-${id}`);
         img?.setAttribute("src", url);
+        // set image responsive
+        img?.setAttribute("style", "width: 100%; height: 256px;");
+
     }).catch(error => { console.log(error); });
 
     return (
-        <div className="md:w-1/3 px-4 mb-8 group relative">
-            <img className="rounded shadow-md group-hover:blur-lg" id={`img-project-${id}`} alt={props.name} />
+        <div className="md:w-1/3 px-4 mb-8 group relative h-64">
+            <img className="rounded shadow-md group-hover:blur-lg object-contain object-center h-64" id={`img-project-${id}`} alt={props.name} />
             <div className="group-hover:block hidden absolute top-2">
                 <h3 className="text-xl mb-2 text-black font-semibold text-center">
                     {props.name}
